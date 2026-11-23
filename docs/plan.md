@@ -250,7 +250,14 @@ No accounts, nothing stored server-side. The site remembers the last export date
 4. **Hardening + self-hosting**: CSP, origin check, rate limit, logs off, commit hash
    footer, "use your own relay" setting, Deploy to Cloudflare button, `npm start` for
    local runs, README with the three ways to run it and the trust model.
-5. **Public**: GitHub repo public (MIT), deploy to `*.workers.dev` or a domain.
+5. **Public**: deployed 2026-11-23 to **https://garmin-data-takeout.garmindatatakeout.workers.dev**
+   (commit `8233bb1`, `npm run deploy`, Cloudflare account of the repo owner). The
+   new workers.dev subdomain served TLS handshake failures for ~3 minutes after the
+   first deploy, then worked. Checked live: CSP / X-Frame-Options / no-referrer /
+   nosniff on both pages, all 13 relay smoke checks (including a real token exchange,
+   data call and file download), and the key check on the export page with a clean
+   console. Per-IP rate limit (120/min) is bound. GitHub repo: not created yet, so the
+   site has no "View the code" links.
 
 ## Open
 - Is Garmin's rate limit per token or per IP? Phase 1 hit it at ~80 downloads in
