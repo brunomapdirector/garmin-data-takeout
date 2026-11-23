@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Export Mockup</title>
+<style>
+  :root {
+    --bg: #f4f4f2; --card: #ffffff; --ink: #1b1b1a; --muted: #6b6b66; --line: #e2e1dc;
+    --accent: #0a6cff; --accent-ink: #ffffff; --ok: #1f8a4c; --warn: #b26a00; --soft: #eef3ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141413; --card: #1e1e1c; --ink: #ececea; --muted: #9a9a94; --line: #33332f;
+      --accent: #4c94ff; --accent-ink: #0b0b0b; --ok: #4cc27f; --warn: #e0a040; --soft: #1d2638;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .note { max-width: 1180px; margin: 24px auto 0; padding: 0 16px; color: var(--muted); font-size: 13px; }
+  .grid { max-width: 1180px; margin: 16px auto 48px; padding: 0 16px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+  .label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .04em; margin: 0 0 6px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  h1 { font-size: 20px; margin: 0 0 4px; } h2 { font-size: 16px; margin: 0 0 12px; }
+  p { margin: 0 0 12px; } .muted { color: var(--muted); font-size: 13px; }
+  ol.steps { padding-left: 20px; margin: 0 0 14px; } ol.steps li { margin-bottom: 6px; }
+  a { color: var(--accent); }
+  input[type=password], input[type=date], input[type=text] { width: 100%; padding: 9px 11px; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
+  .btn { display: block; width: 100%; padding: 10px; margin-top: 12px; border: 0; border-radius: 8px;
+    background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .safe { background: var(--soft); border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-top: 14px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .row:last-child { border-bottom: 0; }
+  .row label { display: flex; gap: 8px; align-items: center; }
+  .tag { font-size: 11px; color: var(--muted); }
+  .dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 4px 0 14px; }
+  .bar > div { height: 100%; background: var(--accent); }
+  .s-ok { color: var(--ok); } .s-run { color: var(--accent); } .s-wait { color: var(--muted); }
+  .warn { color: var(--warn); font-size: 13px; }
+  .big { font-size: 28px; font-weight: 700; margin: 4px 0 0; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 14px; }
+
+  /* Homepage */
+  .home { max-width: 1180px; margin: 16px auto 0; padding: 0 16px; }
+  .home .card { padding: 40px 32px; }
+  .hero { text-align: center; max-width: 620px; margin: 0 auto 36px; }
+  .hero h1 { font-size: 34px; line-height: 1.2; margin-bottom: 10px; }
+  .hero p { font-size: 17px; color: var(--muted); }
+  .cta { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .cta .btn { display: inline-block; width: auto; padding: 11px 22px; margin: 0; text-decoration: none; }
+  .section { margin: 36px auto 0; max-width: 940px; }
+  .section > h2 { font-size: 20px; text-align: center; margin-bottom: 16px; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .tile { border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .tile h3 { font-size: 15px; margin: 0 0 6px; }
+  .tile p { font-size: 14px; color: var(--muted); margin: 0; }
+  .num { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--soft); color: var(--accent); font-weight: 700; font-size: 13px; margin-bottom: 8px; }
+  .gets { columns: 2 220px; padding-left: 18px; margin: 0; font-size: 14px; }
+  .gets li { margin-bottom: 4px; }
+  code, pre { font: 13px/1.5 ui-monospace, Consolas, monospace; }
+  pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin: 8px 0 0; overflow-x: auto; }
+  .tile .btn { margin-top: 10px; }
+  .faq p { font-size: 14px; margin-bottom: 10px; }
+  .faq b { display: block; }
+  .divider { max-width: 1180px; margin: 32px auto 0; padding: 0 16px; }
+</style>
+</head>
+<body>
+
+<p class="note">Mockup only. The homepage first, then the four export screens. Name, colours and copy are placeholders.</p>
+
+<!-- 0. Homepage -->
+<div class="home">
+  <p class="label">0 · Homepage</p>
+  <div class="card">
+
+    <div class="hero">
+      <p class="label" style="margin-bottom:10px">Garmin Data Takeout</p>
+      <h1>All your Garmin data, in one download</h1>
+      <p>Activities with their original files, sleep, heart rate, stress, weight and more.
+        Free, open source, no account needed.</p>
+      <p class="muted" style="margin-top:8px">Built on Garmin's official Personal API, so it does not break when Garmin changes its login.</p>
+      <div class="cta">
+        <a class="btn" href="#">Start my export</a>
+        <a class="btn ghost" href="#">View the code on GitHub</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>How it works</h2>
+      <div class="cols">
+        <div class="tile"><span class="num">1</span><h3>Create a key</h3>
+          <p>In Garmin Connect, make a Personal API key. It takes two minutes and we show you where to click.</p></div>
+        <div class="tile"><span class="num">2</span><h3>Paste it here</h3>
+          <p>Choose what to include and from which date. Your key stays in your browser tab.</p></div>
+        <div class="tile"><span class="num">3</span><h3>Download your zip</h3>
+          <p>We fetch everything from Garmin and pack it into one file. Then you delete the key.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>What you get</h2>
+      <p class="muted" style="text-align:center">Everything Garmin's Personal API offers:</p>
+      <ul class="gets">
+        <li>Every activity, with its original FIT file</li>
+        <li>A spreadsheet of all activities</li>
+        <li>Daily steps, calories and stress</li>
+        <li>Sleep and Body Battery</li>
+        <li>HRV and heart rate zones</li>
+        <li>Weight and hydration</li>
+        <li>VO2 max and fitness age</li>
+        <li>The raw data, untouched, for developers</li>
+      </ul>
+      <p class="muted" style="text-align:center;margin-top:12px">The spreadsheets open in Excel, Numbers and Google Sheets.
+        The FIT files import into Strava and most training apps.</p>
+    </div>
+
+    <div class="section">
+      <h2>Your key stays yours</h2>
+      <div class="cols">
+        <div class="tile"><h3>Only in your tab</h3>
+          <p>The key is never saved. Close the tab and it is gone.</p></div>
+        <div class="tile"><h3>Used once</h3>
+          <p>Garmin's servers do not accept requests from websites directly, so a small relay passes them on.
+            Your key goes through it once to get a 24 hour pass, and nothing is stored or logged.</p></div>
+        <div class="tile"><h3>Open code</h3>
+          <p>The relay is under 100 lines. Read it on GitHub, and check the version shown at the bottom of every page.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Prefer to run it yourself?</h2>
+      <p class="muted" style="text-align:center">Everything is public on GitHub. Your own copy means your key only touches computers you control.</p>
+      <div class="cols">
+        <div class="tile"><h3>Your own copy online</h3>
+          <p>One click puts the whole site on your own free Cloudflare account.</p>
+          <a class="btn" href="#">Deploy to Cloudflare</a></div>
+        <div class="tile"><h3>On your computer</h3>
+          <p>Needs Node.js. Then open the address it prints.</p>
+          <pre>git clone github.com/…/garmin-data-takeout
+cd garmin-data-takeout
+npm install
+npm start</pre></div>
+        <div class="tile"><h3>Just the code</h3>
+          <p>MIT licensed. Fork it, change it, use it for your own scripts.</p>
+          <a class="btn ghost" href="#">Open on GitHub</a></div>
+      </div>
+    </div>
+
+    <div class="section faq">
+      <h2>Questions</h2>
+      <div class="cols">
+        <div>
+          <p><b>Is it free?</b>Yes. No account, no ads, no tracking.</p>
+          <p><b>Is this made by Garmin?</b>No. It uses the Personal API that Garmin offers to every user.</p>
+        </div>
+        <div>
+          <p><b>How long does it take?</b>A few minutes for a year of data, about 15 for ten years.</p>
+          <p><b>Why not Garmin's own export?</b>You can use that too. It is emailed after a few days; this is right away and you choose what to include.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>Not affiliated with Garmin · Open source, MIT · version a1b2c3d</footer>
+  </div>
+</div>
+
+<p class="divider label">Export flow</p>
+
+<div class="grid">
+
+  <!-- 1. Key -->
+  <section>
+    <p class="label">1 · Your key</p>
+    <div class="card">
+      <h1>Download all your Garmin data</h1>
+      <p class="muted">Activities, sleep, heart rate, stress, weight and more. One zip, free, open source.</p>
+      <h2>Get your key (2 minutes)</h2>
+      <ol class="steps">
+        <li>Open the <a href="#">Personal API Key page</a> in Garmin Connect and sign in.</li>
+        <li>Click <b>Create Key</b> and accept the terms.</li>
+        <li>Choose <b>30 days</b>. You can delete it right after.</li>
+        <li>Copy the key. Garmin shows it only once.</li>
+      </ol>
+      <input type="password" placeholder="Paste your key here" autocomplete="off">
+      <button class="btn">Continue</button>
+      <div class="safe">
+        <b>How your key is handled.</b> It stays in this tab and disappears when you close it.
+        It passes our relay once to get a 24 hour pass from Garmin. Nothing is stored or logged.
+        <a href="#">Read the code</a> or <a href="#">run your own relay</a>.
+      </div>
+      <footer>Not affiliated with Garmin · version a1b2c3d</footer>
+    </div>
+  </section>
+
+  <!-- 2. Choose -->
+  <section>
+    <p class="label">2 · Choose your data</p>
+    <div class="card">
+      <h2>What to include</h2>
+      <div class="dates">
+        <div><span class="muted">From</span><input type="date" value="2015-01-01"></div>
+        <div><span class="muted">To</span><input type="date" value="2026-11-23"></div>
+      </div>
+      <div class="row"><label><input type="checkbox" checked> Activities and original files</label><span class="tag">FIT</span></div>
+      <div class="row"><label><input type="checkbox" checked> Daily summary</label><span class="tag">steps, calories</span></div>
+      <div class="row"><label><input type="checkbox" checked> Sleep</label></div>
+      <div class="row"><label><input type="checkbox" checked> Stress and Body Battery</label></div>
+      <div class="row"><label><input type="checkbox" checked> HRV and heart rate zones</label></div>
+      <div class="row"><label><input type="checkbox" checked> Weight and hydration</label></div>
+      <div class="row"><label><input type="checkbox" checked> VO2 max and fitness age</label></div>
+      <div class="row"><label><input type="checkbox"> Nutrition logs</label><span class="tag">slow</span></div>
+      <div class="row"><label><input type="checkbox"> Heart rate and SpO2 per minute</label><span class="tag">slow</span></div>
+      <div class="row"><label><input type="checkbox"> Women's health</label><span class="tag">private</span></div>
+      <p class="muted" style="margin-top:10px">About 15 minutes for 10 years of data. Keep this tab open.</p>
+      <button class="btn">Start export</button>
+    </div>
+  </section>
+
+  <!-- 3. Progress -->
+  <section>
+    <p class="label">3 · Exporting</p>
+    <div class="card">
+      <h2>Exporting your data</h2>
+      <p class="muted">612 of 1,482 activities · about 9 minutes left</p>
+      <div class="bar"><div style="width:42%"></div></div>
+      <div class="row"><span>Profile and settings</span><span class="s-ok">Done</span></div>
+      <div class="row"><span>Daily summary</span><span class="s-ok">Done</span></div>
+      <div class="row"><span>Sleep</span><span class="s-ok">Done</span></div>
+      <div class="row"><span>Activities</span><span class="s-run">612 / 1,482</span></div>
+      <div class="row"><span>Stress and Body Battery</span><span class="s-wait">Waiting</span></div>
+      <div class="row"><span>HRV and heart rate zones</span><span class="s-wait">Waiting</span></div>
+      <div class="row"><span>Weight and hydration</span><span class="s-wait">Waiting</span></div>
+      <p class="warn" style="margin-top:10px">Garmin asked us to slow down. Continuing in 30 seconds.</p>
+      <button class="btn ghost">Pause</button>
+    </div>
+  </section>
+
+  <!-- 4. Done -->
+  <section>
+    <p class="label">4 · Done</p>
+    <div class="card">
+      <h2>Your export is ready</h2>
+      <p class="big">1,482 activities</p>
+      <p class="muted">11 years of daily data · 412 MB</p>
+      <button class="btn">Download zip</button>
+      <div class="safe">
+        <b>Last step: delete your key.</b> You do not need it any more.
+        <a href="#">Open the Personal API Key page</a> and click Delete.
+      </div>
+      <h2 style="margin-top:16px">What is inside</h2>
+      <p class="muted"><b>activities.csv</b> opens in Excel or Google Sheets. <b>files/</b> holds the original
+        FIT files for Strava and other apps. <b>README.txt</b> explains the rest.</p>
+      <p class="muted">Next time we start from 23 Nov 2026, so you only get what is new.</p>
+      <button class="btn ghost">Start a new export</button>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

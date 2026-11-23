@@ -1,0 +1,14 @@
+# Secrets: the Personal API key never goes in git
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# Exported or probed personal data
+probe-out/
+exports/
+*.zip
+
+node_modules/
+dist/
+.wrangler/
