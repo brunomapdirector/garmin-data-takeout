@@ -5,6 +5,9 @@
   "description": "All your Garmin Connect data in one zip, right in your browser. Built on Garmin's official Personal API.",
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "vite",
     "dev": "vite",

@@ -10,6 +10,12 @@ probe-out/
 exports/
 *.zip
 
+# Garmin's spec is not redistributed (its Terms of Use restrict copying site Content).
+# The committed types.gen.ts is generated from a structure-only copy: names, types,
+# formats and enums, none of Garmin's descriptions or examples.
+# Recreate: npm run fetch-spec -w garmin-personal-api && npm run gen -w garmin-personal-api
+packages/personal-api/spec/*.json
+
 node_modules/
 dist/
 .wrangler/
