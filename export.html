@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Export · Garmin Data Takeout</title>
+  <script type="module" src="/src/web/export-page.ts"></script>
+</head>
+<body>
+  <div class="wrap narrow">
+    <div class="brand"><a href="/">Garmin Data Takeout</a></div>
+
+    <!-- 1. Key -->
+    <section id="s-key" class="card">
+      <p class="label">Step 1 of 3 · Your key</p>
+      <h1>Paste your Personal API key</h1>
+
+      <div id="pending" class="note" hidden>
+        <b>You have an unfinished export.</b> <span id="pending-text"></span>
+        Paste your key and it continues where it stopped.
+        <button id="discard" class="btn ghost" type="button">Discard it and start fresh</button>
+      </div>
+
+      <h2 style="margin-top:16px">Get a key (2 minutes)</h2>
+      <ol class="steps">
+        <li>Sign in to <a href="https://connect.garmin.com" target="_blank" rel="noopener noreferrer">Garmin Connect</a> on the web
+          and open the Personal API Key page (<a href="https://support.garmin.com/en-US/?faq=HfTwLfw1Gn2A7WS1GdAMH8" target="_blank" rel="noopener noreferrer">Garmin's instructions</a>).</li>
+        <li>Click <b>Create Key</b> and accept the terms.</li>
+        <li>Choose <b>30 days</b>. You can delete it right after.</li>
+        <li>Copy the key. Garmin shows it only once.</li>
+      </ol>
+      <form id="key-form" autocomplete="off">
+        <input id="key" type="password" placeholder="Paste your key here" autocomplete="off" spellcheck="false" required aria-label="Personal API key">
+        <button id="key-go" class="btn" type="submit">Continue</button>
+      </form>
+      <p id="key-error" class="error"></p>
+      <div class="note">
+        <b>How your key is handled.</b> It stays in this tab and disappears when you close it.
+        It passes our relay once to get a 24 hour pass from Garmin. Nothing is stored or logged.
+        <a data-repo="/blob/main/src/worker/index.ts" href="#">Read the relay's code.</a>
+      </div>
+    </section>
+
+    <!-- 2. Choose -->
+    <section id="s-choose" class="card" hidden>
+      <p class="label">Step 2 of 3 · Choose your data</p>
+      <h1>What to include</h1>
+      <div class="dates">
+        <div><label class="field" for="from">From (empty: your first activity)</label><input id="from" type="date"></div>
+        <div><label class="field" for="to">To (empty: today)</label><input id="to" type="date"></div>
+      </div>
+      <div class="group">
+        <div class="row"><label><input type="checkbox" id="activities" checked> Activities and their original files</label><span class="tag">FIT</span></div>
+        <div id="ds-main"></div>
+      </div>
+      <div class="group"><p class="label">More detail (slower)</p><div id="ds-detail"></div></div>
+      <div class="group"><p class="label">Day by day (slow: one request per day)</p><div id="ds-day"></div></div>
+      <p class="muted" style="margin-top:12px">Garmin allows about one request per second. The defaults take a few minutes for years of data;
+        each day-by-day option adds about one minute per two months.</p>
+      <button id="start" class="btn" type="button">Start export</button>
+      <button id="back" class="btn ghost" type="button">Back</button>
+    </section>
+
+    <!-- 3. Progress -->
+    <section id="s-progress" class="card" hidden>
+      <p class="label">Step 3 of 3 · Exporting</p>
+      <h1>Exporting your data</h1>
+      <p id="headline" class="muted"></p>
+      <div class="bar"><div id="bar"></div></div>
+      <div id="steps"></div>
+      <p id="wait" class="warn"></p>
+      <p class="muted">Keep this tab open. If it closes, start again with the same choices and it continues where it stopped.</p>
+      <button id="stop" class="btn ghost" type="button">Stop (you can continue later)</button>
+      <p id="run-error" class="error"></p>
+      <button id="retry" class="btn" type="button" hidden>Back to the key</button>
+    </section>
+
+    <!-- 4. Done -->
+    <section id="s-done" class="card" hidden>
+      <p class="label">Done</p>
+      <h1>Your export is ready</h1>
+      <p id="done-big" class="big"></p>
+      <p id="done-sub" class="muted"></p>
+      <a id="download" class="btn">Download zip</a>
+      <div class="note">
+        <b>Last step: delete your key.</b> You do not need it any more. In Garmin Connect, open the
+        Personal API Key page and click Delete.
+      </div>
+      <h2 style="margin-top:18px">What is inside</h2>
+      <p class="muted"><b>activities/activities.csv</b> opens in Excel or Google Sheets. <b>activities/files/</b> holds the original
+        FIT files for Strava and other apps. <b>wellness/</b> has one spreadsheet per dataset. <b>README.txt</b> explains the rest.</p>
+      <p id="failed" class="warn"></p>
+      <div class="note">A copy is kept in this browser's private storage so you can download it again.
+        <button id="remove" class="btn ghost" type="button">Remove it from this browser</button></div>
+      <a class="btn ghost" href="/export.html">Start a new export</a>
+    </section>
+
+    <footer class="site">Not affiliated with Garmin · <a href="/">About</a> · <span data-version></span></footer>
+  </div>
+</body>
+</html>

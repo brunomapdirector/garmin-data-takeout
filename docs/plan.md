@@ -235,9 +235,18 @@ No accounts, nothing stored server-side. The site remembers the last export date
    unfinished export with the same settings, Wake Lock and a leave warning while it runs.
    Zip layout as built: `activities/`, `wellness/<dataset>.csv`, `raw/<dataset>/…`,
    `raw/profile/…`, `manifest.json`, `README.txt`.
-3. **UI**: the homepage and the four export screens in the mockup: key (with guided
-   steps), choose data, progress (pause / resume, per-dataset status), done
-   (delete-your-key reminder).
+3. **UI** (built 2026-11-23): `index.html` homepage (how it works, what you get, key
+   handling, run it yourself, FAQ) and `export.html` with the four screens: key
+   (guided steps, checked with one token exchange before moving on, resume notice),
+   choose (main / more detail / day by day groups), progress (per-dataset rows, rate
+   limit waits, Stop = terminate the worker, resume later), done (download, delete-key
+   reminder, remove the browser copy). Plain TypeScript, no framework, shared
+   `src/web/style.css`. `public/_headers`: strict CSP (`script-src 'self'`,
+   `connect-src 'self'`, no framing), no-referrer, nosniff. Footer shows the build's
+   commit; GitHub links appear once `GARMIN_TAKEOUT_REPO` is set at build time.
+   README.md and LICENSE (MIT) added. Checked: production preview serves the headers;
+   the key check works under the CSP with a clean console. Not checked: a full export
+   with a real key on this page, and the download link under the CSP.
 4. **Hardening + self-hosting**: CSP, origin check, rate limit, logs off, commit hash
    footer, "use your own relay" setting, Deploy to Cloudflare button, `npm start` for
    local runs, README with the three ways to run it and the trust model.
