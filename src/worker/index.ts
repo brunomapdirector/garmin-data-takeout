@@ -13,6 +13,8 @@ const TOKEN_PATH = '/personalapitoken-service/personal-api/personal-api-key/toke
 
 interface Env {
   EXTRA_ORIGINS?: string;
+  /** Workers Rate Limiting binding (wrangler.jsonc); absent in setups without it. */
+  RELAY_LIMITER?: { limit(opts: { key: string }): Promise<{ success: boolean }> };
 }
 
 const json = (status: number, error: string) =>
@@ -66,6 +68,19 @@ export default {
 
     const cors = corsHeaders(req, env);
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+
+    // Per-IP cap. Answers like Garmin's own limit (429 + Retry-After), so the page's
+    // client simply waits and carries on.
+    if (env.RELAY_LIMITER) {
+      const ip = req.headers.get('cf-connecting-ip') ?? 'unknown';
+      const { success } = await env.RELAY_LIMITER.limit({ key: ip });
+      if (!success) {
+        return new Response(JSON.stringify({ error: 'too many requests' }), {
+          status: 429,
+          headers: { 'content-type': 'application/json', 'retry-after': '30', 'cache-control': 'no-store', ...cors },
+        });
+      }
+    }
 
     const auth = req.headers.get('authorization') ?? '';
 

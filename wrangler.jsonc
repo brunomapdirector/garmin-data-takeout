@@ -10,6 +10,12 @@
   },
   // The relay sees keys and tokens. Nothing is logged: no Workers Logs, no traces.
   "observability": { "enabled": false, "logs": { "enabled": false } },
+  // Per-IP cap on relay requests, so the relay cannot be used to hammer Garmin from
+  // our address. One export needs about 1 request per second (Garmin's own limit),
+  // so 120 per minute leaves room for one export plus retries per visitor.
+  "ratelimits": [
+    { "name": "RELAY_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } }
+  ],
   "vars": {
     // Comma-separated extra origins allowed to use this relay, for people who run
     // their own relay but use another copy of the site. Empty: same origin only.
