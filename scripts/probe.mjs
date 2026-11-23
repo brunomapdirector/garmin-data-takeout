@@ -2,7 +2,7 @@
 //
 //   node scripts/probe.mjs
 //
-// Reads GARMIN_API_KEY from the environment or from .env. Prints only the SHAPE of
+// Reads GARMIN_API_KEY from the environment or from .garmin-api-key. Prints only the SHAPE of
 // responses (keys, types, counts, dates) and never the key or token. Raw responses go
 // to probe-out/ (gitignored) on this machine only. Requests run one at a time with a
 // pause between them; it does not try to provoke rate limits.
@@ -17,13 +17,13 @@ const MAX_PAGES = 80; // 80 x 99 = 7,920 activities
 // ---------- key ----------
 function loadKey() {
   if (process.env.GARMIN_API_KEY) return process.env.GARMIN_API_KEY.trim();
-  if (existsSync('.env')) {
-    for (const line of readFileSync('.env', 'utf8').split(/\r?\n/)) {
+  if (existsSync('.garmin-api-key')) {
+    for (const line of readFileSync('.garmin-api-key', 'utf8').split(/\r?\n/)) {
       const m = line.match(/^\s*GARMIN_API_KEY\s*=\s*(.*)\s*$/);
       if (m && m[1]) return m[1].replace(/^["']|["']$/g, '').trim();
     }
   }
-  console.error('No GARMIN_API_KEY in the environment or .env');
+  console.error('No GARMIN_API_KEY in the environment or .garmin-api-key');
   process.exit(1);
 }
 const KEY = loadKey();

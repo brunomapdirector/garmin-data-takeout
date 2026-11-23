@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "garmin-data-takeout",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  // The static site is served as assets; only /api/* reaches the Worker.
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  // The relay sees keys and tokens. Nothing is logged: no Workers Logs, no traces.
+  "observability": { "enabled": false, "logs": { "enabled": false } },
+  "vars": {
+    // Comma-separated extra origins allowed to use this relay, for people who run
+    // their own relay but use another copy of the site. Empty: same origin only.
+    "EXTRA_ORIGINS": ""
+  }
+}

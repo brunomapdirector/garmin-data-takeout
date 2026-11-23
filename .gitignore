@@ -1,7 +1,8 @@
-# Secrets: the Personal API key never goes in git
+# Secrets: the Personal API key never goes in git. It lives in .garmin-api-key, not
+# .env, because Wrangler loads .env into the Worker and the relay must not hold a key.
+.garmin-api-key
 .env
 .env.*
-!.env.example
 .dev.vars
 
 # Exported or probed personal data

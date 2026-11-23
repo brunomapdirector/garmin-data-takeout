@@ -74,6 +74,18 @@ Hobby caps transfer at 100 GB/month, about 250 full exports).
 - **Activity list** includes owner name and profile image URLs; strip nothing (it is the
   user's own data) but leave them out of `activities.csv`.
 
+## Phase 1 findings (full activity export, 2026-11-23, `scripts/export-e2e.ts`)
+
+- **Rate limit is real and announced**: after ~80 file downloads at 2 in flight
+  (~30 s), Garmin answered **429 with a `Retry-After` header** (36–37 s), then a few
+  shorter ones (5 s, 1 s). Honouring `Retry-After` got all 195 files with no failures.
+  The relay passes `Retry-After` through; the client waits exactly that long.
+- **Cost of a full export**: 195 activities = 82 s, **34.1 MB** (~175 KB per FIT file,
+  more than the 15–21 KB the probe's two samples suggested). 1,500 activities would be
+  roughly 260 MB and 10+ minutes, mostly waiting on the rate limit.
+- **Wrangler loads `.env` into the Worker** in local dev ("Using secrets defined in
+  .env"). The key file is therefore `.garmin-api-key`, never `.env`.
+
 ## Architecture
 
 ```
@@ -189,8 +201,12 @@ No accounts, nothing stored server-side. The site remembers the last export date
 
 0. **Probe** (done 2026-11-23): Node script straight to Garmin, no relay. See Phase 0
    findings.
-1. **Relay + activities**: worker with allow-list, core client, bare page that exports
-   activities (CSV + files) into a zip.
+1. **Relay + activities** (built 2026-11-23): `src/worker/` relay with the allow-list
+   and origin check; `src/core/` token source, rate-limit-aware client, activity list,
+   file download, CSV, zip; `index.html` + `src/web/main.ts` bare page.
+   `npm run smoke` checks the relay; `npx tsx scripts/export-e2e.ts` runs the whole
+   export from Node. The zip is still built in memory (`zipSync`); streaming to disk
+   comes with the real UI.
 2. **All default datasets** + CSV mapping + `raw/` + README.txt in the zip.
 3. **UI**: the homepage and the four export screens in the mockup: key (with guided
    steps), choose data, progress (pause / resume, per-dataset status), done
@@ -201,8 +217,9 @@ No accounts, nothing stored server-side. The site remembers the last export date
 5. **Public**: GitHub repo public (MIT), deploy to `*.workers.dev` or a domain.
 
 ## Open
-- Garmin's real rate limits: no headers expose them, and the probe was too gentle to
-  hit one. All users share the relay's IPs, so Garmin may see one heavy client.
+- Is Garmin's rate limit per token or per IP? Phase 1 hit it at ~80 downloads in
+  ~30 s from one machine. If it is per IP, every user of the hosted relay shares one
+  budget and a busy day slows everyone down.
 - HRV range limit (above 120 days).
 - Whether Garmin's brand guidelines allow "Garmin" in the site name.
 - Whether the Rate Limiting binding is on the Workers free plan.

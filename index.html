@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Garmin Data Takeout</title>
+  <style>
+    :root { --bg: #f4f4f2; --card: #fff; --ink: #1b1b1a; --muted: #6b6b66; --line: #e2e1dc; --accent: #0a6cff; --bad: #b3261e; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #141413; --card: #1e1e1c; --ink: #ececea; --muted: #9a9a94; --line: #33332f; --accent: #4c94ff; --bad: #f2b8b5; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 520px; margin: 40px auto; padding: 0 16px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    p { margin: 0 0 12px; }
+    .muted { color: var(--muted); font-size: 13px; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
+    input { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; }
+    .dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    button { width: 100%; margin-top: 16px; padding: 10px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    #status { margin-top: 16px; min-height: 1.5em; }
+    #error { color: var(--bad); margin-top: 8px; }
+    progress { width: 100%; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <h1>Garmin Data Takeout</h1>
+      <p class="muted">Phase 1 test page: activities and their original files. Your key stays in this tab.</p>
+      <form id="form" autocomplete="off">
+        <label for="key">Personal API key</label>
+        <input id="key" type="password" autocomplete="off" spellcheck="false" required>
+        <div class="dates">
+          <div><label for="from">From (optional)</label><input id="from" type="date"></div>
+          <div><label for="to">To (optional)</label><input id="to" type="date"></div>
+        </div>
+        <button id="go" type="submit">Export activities</button>
+      </form>
+      <div id="status"></div>
+      <progress id="bar" max="1" value="0" hidden></progress>
+      <div id="error"></div>
+    </div>
+  </main>
+  <script type="module" src="/src/web/main.ts"></script>
+</body>
+</html>

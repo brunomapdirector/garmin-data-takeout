@@ -1,0 +1,3 @@
+# Copy to .garmin-api-key and paste your Garmin Connect Personal API key. It is gitignored.
+# Not named .env on purpose: Wrangler loads .env into the Worker, and the relay must never hold a key.
+GARMIN_API_KEY=

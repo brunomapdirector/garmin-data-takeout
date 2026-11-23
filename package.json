@@ -1,0 +1,27 @@
+{
+  "name": "garmin-data-takeout",
+  "version": "0.1.0",
+  "private": true,
+  "description": "All your Garmin Connect data in one zip, right in your browser. Built on Garmin's official Personal API.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vite build && wrangler deploy",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.worker.json",
+    "smoke": "node scripts/relay-smoke.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.70.1",
+    "@cloudflare/workers-types": "^5.20261123.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "wrangler": "^4.166.0"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3"
+  }
+}
