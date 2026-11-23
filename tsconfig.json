@@ -12,5 +12,5 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src/web", "src/core", "vite.config.ts"]
+  "include": ["src/web", "src/core", "dev", "vite.config.ts"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "garmin-data-takeout",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "All your Garmin Connect data in one zip, right in your browser. Built on Garmin's official Personal API.",
   "license": "MIT",

@@ -86,6 +86,26 @@ Hobby caps transfer at 100 GB/month, about 250 full exports).
 - **Wrangler loads `.env` into the Worker** in local dev ("Using secrets defined in
   .env"). The key file is therefore `.garmin-api-key`, never `.env`.
 
+## Phase 2 findings (wellness + resume, 2026-11-23)
+
+- **Rate limit shape**: about 50 requests, then a 429 with `Retry-After` of 40–50 s,
+  repeating. So roughly **1 request/second sustained**; request count is what an
+  export costs in time.
+- **Range limits confirmed**: VO2 max 365 d (730 → 400), HRV ≥ 365 d, steps 28 d and
+  weight 364 d exactly as documented (one day over → 400 `{}`).
+- **Empty body = no data**: HRV for years before the watch had it returns 200 with an
+  empty body, not JSON. `getJson` returns `null` for that.
+- **Defaults chosen by cost**: stress, steps, Body Battery and hydration detail are
+  **off by default**; their daily numbers are in the daily summary, and at 28–31 days
+  per request they were ~390 of ~700 requests. Full default export of this account
+  (195 activities, 2019–2026): **191 s, 35 MB, 341 files, 0 failures** (was 434 s).
+- **Resume works**: a rerun with the same settings kept all files and finished in
+  5 s, refetching only what had failed.
+- **Browser-only parts checked** with `dev/opfs-selftest.html` (11 checks: OPFS
+  write/read/list/overwrite/clear, zip streamed to a separate OPFS output, FIT intact).
+  A real export in the browser with a key has been run by the user on the phase 1
+  page, not yet on this one.
+
 ## Architecture
 
 ```
@@ -207,7 +227,14 @@ No accounts, nothing stored server-side. The site remembers the last export date
    `npm run smoke` checks the relay; `npx tsx scripts/export-e2e.ts` runs the whole
    export from Node. The zip is still built in memory (`zipSync`); streaming to disk
    comes with the real UI.
-2. **All default datasets** + CSV mapping + `raw/` + README.txt in the zip.
+2. **All datasets + resume** (built 2026-11-23): `src/core/datasets.ts` (endpoints,
+   range limits, chunking, generic flatten to CSV), `src/core/store.ts` +
+   `src/web/opfs-store.ts` (files land in OPFS as they arrive), `src/core/zip.ts`
+   (zip streamed file by file into OPFS, never all in memory), `src/web/export.worker.ts`
+   (export runs in a Web Worker so background tabs are not throttled), resume of an
+   unfinished export with the same settings, Wake Lock and a leave warning while it runs.
+   Zip layout as built: `activities/`, `wellness/<dataset>.csv`, `raw/<dataset>/…`,
+   `raw/profile/…`, `manifest.json`, `README.txt`.
 3. **UI**: the homepage and the four export screens in the mockup: key (with guided
    steps), choose data, progress (pause / resume, per-dataset status), done
    (delete-your-key reminder).

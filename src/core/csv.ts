@@ -14,7 +14,14 @@ export function toCsv<T>(rows: T[], columns: Column<T>[]): string {
   return '﻿' + lines.join('\r\n') + '\r\n';
 }
 
-export const round = (n: number | null | undefined, digits: number) =>
+/** CSV from flat rows whose columns vary: the union of keys, in first-seen order. */
+export function flatRowsToCsv(rows: Array<Record<string, string | number>>, first: string[] = []): string {
+  const keys = new Set<string>(first.filter((k) => rows.some((r) => k in r)));
+  for (const r of rows) for (const k of Object.keys(r)) keys.add(k);
+  return toCsv(rows, [...keys].map((k): Column<Record<string, string | number>> => [k, (r) => r[k]]));
+}
+
+export const round =(n: number | null | undefined, digits: number) =>
   typeof n === 'number' && Number.isFinite(n) ? Number(n.toFixed(digits)) : null;
 
 export function hms(seconds: number | null | undefined): string | null {

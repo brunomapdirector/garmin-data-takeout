@@ -27,8 +27,12 @@ export class GarminClient {
     private onWait: WaitHandler = () => {},
   ) {}
 
-  getJson<T = unknown>(path: string, query?: Record<string, string | number>): Promise<T> {
-    return this.#request(path, query, async (res) => (await res.json()) as T);
+  /** Parsed JSON, or null when Garmin has no data and sends an empty body (e.g. HRV before the watch had it). */
+  getJson<T = unknown>(path: string, query?: Record<string, string | number>): Promise<T | null> {
+    return this.#request(path, query, async (res) => {
+      const text = await res.text();
+      return text.trim() ? (JSON.parse(text) as T) : null;
+    });
   }
 
   getBytes(path: string, query?: Record<string, string | number>): Promise<Uint8Array> {
